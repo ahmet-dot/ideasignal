@@ -456,7 +456,6 @@ function Report({ report, onReset, tab, setTab }) {
           </div>
         </div>
       )}
-    </div>
   );
 }
 
