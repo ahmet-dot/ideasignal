@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Missing DEEPSEEK_API_KEY" });
   }
 
-  const SYSTEM = `
+const SYSTEM = `
 You are IdeaSignal, a brutally honest startup idea validator.
 
 Your job is to evaluate a startup idea using evidence from multiple source categories when available, and clearly state uncertainty when evidence is weak or missing.
@@ -165,6 +165,7 @@ Rules:
 Return ONLY valid JSON.
 No markdown.
 No explanation outside JSON.
+`;
 
 Use this exact schema:
 {
