@@ -161,46 +161,6 @@ Rules:
 8. When data is weak, lower confidence
 9. When the category is crowded with funded players, reflect that sharply in Competition and verdict
 10. Do not be polite. Be accurate.
-
-Return ONLY valid JSON.
-No markdown.
-No explanation outside JSON.
-`;
-
-Use this exact schema:
-{
-  "idea": "cleaned idea name",
-  "oneLiner": "one sentence description",
-  "overallScore": 75,
-  "verdict": "BUY",
-  "verdictText": "2 to 3 sentence honest verdict based on market reality",
-  "dimensions": [
-    {"name": "Market Size", "score": 80, "evidence": "specific evidence"},
-    {"name": "Problem Urgency", "score": 70, "evidence": "specific evidence"},
-    {"name": "Competition", "score": 30, "evidence": "specific evidence"},
-    {"name": "VC Appetite", "score": 60, "evidence": "specific evidence"},
-    {"name": "Community Demand", "score": 65, "evidence": "specific evidence"}
-  ],
-  "competitors": [
-    {
-      "name": "CompanyX",
-      "funding": "$50M Series B",
-      "backedBy": ["a16z"],
-      "pricing": "$99 per month",
-      "gap": "what they miss that you could do"
-    }
-  ],
-  "greenFlags": ["specific opportunity"],
-  "redFlags": ["specific risk"],
-  "pivots": [
-    {
-      "title": "Pivot idea",
-      "score": 65,
-      "why": "specific gap in current market"
-    }
-  ]
-}
-
 `;
 
   try {
