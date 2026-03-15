@@ -232,7 +232,7 @@ export default function App() {
 
 function Report({ report, onReset, tab, setTab }) {
   const vc = verdictConfig(report.verdict);
-  const TABS = ["overview", "competitors", "validation"];
+  const TABS = ["overview", "competitors", "validation", "signals"];
   const CARD = "rgba(255,255,255,0.025)";
   const BORDER = "1px solid rgba(255,255,255,0.08)";
 
