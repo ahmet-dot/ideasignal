@@ -402,38 +402,42 @@ function Report({ report, onReset, tab, setTab }) {
       )}
 
       {tab === "validation" && (
-        <div style={{ display: "grid", gap: 14 }}>
-          <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 20 }}>
-            <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 18px" }}>
-              // validation steps
-            </p>
-            {(report.validationSteps || []).map((step, i) => (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: 12, marginBottom: i < report.validationSteps.length - 1 ? 14 : 0 }}>
-                <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
-                  {i + 1}
-                </div>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
-                  {step}
-                </p>
-              </div>
-            ))}
+  <div style={{ display: "grid", gap: 14 }}>
+    <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 20 }}>
+      <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 18px" }}>
+        // validation steps
+      </p>
+
+      {(report.validationSteps || []).map((step, i) => (
+        <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: 12, marginBottom: i < report.validationSteps.length - 1 ? 14 : 0 }}>
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {i + 1}
           </div>
-                  {tab === "signals" && (
-        <div style={{ display: "grid", gap: 14 }}>
-          <SignalCard
-            title="Reddit Signals"
-            items={report.marketSignals?.reddit || []}
-          />
-          <SignalCard
-            title="Google Signals"
-            items={report.marketSignals?.google || []}
-          />
-          <SignalCard
-            title="Funding Hints"
-            items={report.marketSignals?.fundingHints || []}
-          />
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
+            {step}
+          </p>
         </div>
-      )}
+      ))}
+    </div>
+  </div>
+)}
+
+{tab === "signals" && (
+  <div style={{ display: "grid", gap: 14 }}>
+    <SignalCard
+      title="Reddit Signals"
+      items={report.marketSignals?.reddit || []}
+    />
+    <SignalCard
+      title="Google Signals"
+      items={report.marketSignals?.google || []}
+    />
+    <SignalCard
+      title="Funding Hints"
+      items={report.marketSignals?.fundingHints || []}
+    />
+  </div>
+)}
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <PlanCard title="Top Hypothesis" value={report.validationPlan?.topHypothesis} />
