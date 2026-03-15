@@ -1,8 +1,14 @@
 import { useState, useRef } from "react";
 
-function scoreColor(s) {
-  if (s >= 70) return "#4ade80";
-  if (s >= 45) return "#fbbf24";
+function scoreColor10(s) {
+  if (s >= 8) return "#4ade80";
+  if (s >= 5) return "#fbbf24";
+  return "#f87171";
+}
+
+function assessmentColor(v) {
+  if (v === "Strong") return "#4ade80";
+  if (v === "Moderate") return "#fbbf24";
   return "#f87171";
 }
 
@@ -12,17 +18,17 @@ function verdictConfig(v) {
     BUY: { color: "#a3e635", bg: "rgba(163,230,53,0.08)", border: "rgba(163,230,53,0.2)", label: "BUY" },
     HOLD: { color: "#fbbf24", bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)", label: "HOLD" },
     SELL: { color: "#fb923c", bg: "rgba(251,146,60,0.08)", border: "rgba(251,146,60,0.2)", label: "SELL" },
-    STRONG_SELL: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)", label: "STRONG SELL" }
+    STRONG_SELL: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)", label: "STRONG SELL" },
   };
   return map[v] || map.HOLD;
 }
 
 const STEPS = [
-  "Scanning competitor landscape...",
-  "Reading community demand signals...",
-  "Checking investor appetite...",
-  "Analyzing market pressure...",
-  "Generating validation report..."
+  "Framing the startup idea...",
+  "Analyzing customer and market...",
+  "Mapping competition and revenue logic...",
+  "Reviewing risks and growth potential...",
+  "Generating founder memo..."
 ];
 
 const BG = "#08080d";
@@ -54,13 +60,13 @@ export default function App() {
       i += 1;
       setStep(Math.min(i, STEPS.length - 1));
       if (i >= STEPS.length - 1) clearInterval(timer.current);
-    }, 2200);
+    }, 2000);
 
     try {
       const res = await fetch("/api/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea: idea.trim() })
+        body: JSON.stringify({ idea: idea.trim() }),
       });
 
       clearInterval(timer.current);
@@ -92,7 +98,7 @@ export default function App() {
       {phase === "idle" && (
         <div style={{ maxWidth: 680, margin: "0 auto", padding: "72px 24px 0", textAlign: "center" }}>
           <p style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.28)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
-            competitors · market reality · investor appetite
+            startup viability · founder memo · validation plan
           </p>
 
           <h1 style={{ fontFamily: SERIF, fontSize: "clamp(40px,6vw,68px)", lineHeight: 1.05, letterSpacing: "-1px", margin: "0 0 18px", fontWeight: 400 }}>
@@ -102,9 +108,9 @@ export default function App() {
           </h1>
 
           <p style={{ fontSize: 15, color: "rgba(255,255,255,0.38)", lineHeight: 1.7, margin: "0 0 40px" }}>
-            Structured startup idea analysis.
+            Structured startup analysis with a sharper founder lens.
             <br />
-            Brutal, clean, fast.
+            Market, competition, monetization, risk, and what to test next.
           </p>
 
           <div style={{ position: "relative", maxWidth: 580, margin: "0 auto 12px" }}>
@@ -121,7 +127,7 @@ export default function App() {
                 outline: "none",
                 boxSizing: "border-box"
               }}
-              placeholder="AI powered sales coaching for SDR teams..."
+              placeholder="AI powered sales coaching platform for SDR managers..."
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && run()}
@@ -149,7 +155,7 @@ export default function App() {
           </div>
 
           <p style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.16)" }}>
-            // powered by openai
+            // deepseek-chat · structured venture memo
           </p>
         </div>
       )}
@@ -157,7 +163,7 @@ export default function App() {
       {phase === "loading" && (
         <div style={{ maxWidth: 480, margin: "80px auto", padding: "0 24px" }}>
           <p style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 28 }}>
-            // validating idea
+            // building analysis
           </p>
 
           <div style={{ background: CARD, border: BORDER, borderRadius: 14, padding: "24px 20px" }}>
@@ -218,10 +224,7 @@ export default function App() {
       )}
 
       {phase === "done" && report && (
-        <Report report={report} onReset={() => {
-          setPhase("idle");
-          setIdea("");
-        }} tab={tab} setTab={setTab} />
+        <Report report={report} onReset={() => { setPhase("idle"); setIdea(""); }} tab={tab} setTab={setTab} />
       )}
     </div>
   );
@@ -229,20 +232,22 @@ export default function App() {
 
 function Report({ report, onReset, tab, setTab }) {
   const vc = verdictConfig(report.verdict);
-  const TABS = ["overview", "competitors", "pivots"];
+  const TABS = ["overview", "competitors", "validation"];
+  const CARD = "rgba(255,255,255,0.025)";
+  const BORDER = "1px solid rgba(255,255,255,0.08)";
 
   return (
-    <div style={{ maxWidth: 880, margin: "0 auto", padding: "48px 24px 0" }}>
+    <div style={{ maxWidth: 920, margin: "0 auto", padding: "48px 24px 0" }}>
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6, flexWrap: "wrap", gap: 14 }}>
         <div>
           <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "2px", textTransform: "uppercase", margin: "0 0 8px" }}>
-            // validation report
+            // founder memo
           </p>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(26px,4vw,42px)", margin: 0, fontWeight: 400, letterSpacing: "-0.5px" }}>
-            {report.idea}
+            Startup Viability Assessment
           </h2>
           <p style={{ fontSize: 14, color: "rgba(255,255,255,0.38)", margin: "6px 0 0" }}>
-            {report.oneLiner}
+            {report.ideaSummary}
           </p>
         </div>
 
@@ -266,11 +271,11 @@ function Report({ report, onReset, tab, setTab }) {
 
       <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 20, alignItems: "center", margin: "24px 0", background: CARD, border: BORDER, borderRadius: 14, padding: "22px" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: 88, height: 88, borderRadius: "50%", border: `3px solid ${scoreColor(report.overallScore)}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: `${scoreColor(report.overallScore)}12` }}>
-            <span style={{ fontSize: 30, fontWeight: 600, color: scoreColor(report.overallScore), lineHeight: 1, fontFamily: SERIF }}>
+          <div style={{ width: 88, height: 88, borderRadius: "50%", border: `3px solid ${scoreColor10(report.overallScore)}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: `${scoreColor10(report.overallScore)}12` }}>
+            <span style={{ fontSize: 30, fontWeight: 600, color: scoreColor10(report.overallScore), lineHeight: 1, fontFamily: SERIF }}>
               {report.overallScore}
             </span>
-            <span style={{ fontSize: 10, color: scoreColor(report.overallScore), fontFamily: MONO }}>/100</span>
+            <span style={{ fontSize: 10, color: scoreColor10(report.overallScore), fontFamily: MONO }}>/10</span>
           </div>
         </div>
 
@@ -312,20 +317,19 @@ function Report({ report, onReset, tab, setTab }) {
         <div style={{ display: "grid", gap: 14 }}>
           <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: "20px" }}>
             <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 18px" }}>
-              // dimension scores
+              // viability analysis
             </p>
 
-            {(report.dimensions || []).map((d, i) => (
-              <div key={i} style={{ marginBottom: i < report.dimensions.length - 1 ? 16 : 0 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                  <span style={{ fontSize: 13, color: "rgba(255,255,255,0.65)" }}>{d.name}</span>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: scoreColor(d.score), fontFamily: MONO }}>{d.score}</span>
+            {(report.analysis || []).map((item, i) => (
+              <div key={i} style={{ marginBottom: i < report.analysis.length - 1 ? 18 : 0 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.72)" }}>{item.category}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: assessmentColor(item.assessment), fontFamily: MONO, border: `1px solid ${assessmentColor(item.assessment)}33`, padding: "3px 8px", borderRadius: 999 }}>
+                    {item.assessment}
+                  </span>
                 </div>
-                <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden", marginBottom: 5 }}>
-                  <div style={{ width: `${d.score}%`, height: "100%", background: scoreColor(d.score), borderRadius: 2 }} />
-                </div>
-                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.32)", margin: 0, fontFamily: MONO, lineHeight: 1.5 }}>
-                  {d.evidence}
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.46)", margin: 0, lineHeight: 1.7 }}>
+                  {item.analysis}
                 </p>
               </div>
             ))}
@@ -334,9 +338,9 @@ function Report({ report, onReset, tab, setTab }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ background: "rgba(74,222,128,0.03)", border: "1px solid rgba(74,222,128,0.1)", borderRadius: 12, padding: 16 }}>
               <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(74,222,128,0.55)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 12px" }}>
-                // green flags
+                // top strengths
               </p>
-              {(report.greenFlags || []).map((g, i) => (
+              {(report.topStrengths || []).map((g, i) => (
                 <p key={i} style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", margin: "0 0 8px", lineHeight: 1.5, paddingLeft: 12, borderLeft: "2px solid rgba(74,222,128,0.25)" }}>
                   {g}
                 </p>
@@ -345,14 +349,34 @@ function Report({ report, onReset, tab, setTab }) {
 
             <div style={{ background: "rgba(248,113,113,0.03)", border: "1px solid rgba(248,113,113,0.1)", borderRadius: 12, padding: 16 }}>
               <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(248,113,113,0.55)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 12px" }}>
-                // red flags
+                // top concerns
               </p>
-              {(report.redFlags || []).map((r, i) => (
+              {(report.topConcerns || []).map((r, i) => (
                 <p key={i} style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", margin: "0 0 8px", lineHeight: 1.5, paddingLeft: 12, borderLeft: "2px solid rgba(248,113,113,0.25)" }}>
                   {r}
                 </p>
               ))}
             </div>
+          </div>
+
+          <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 18 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 12px" }}>
+              // strategic pivots
+            </p>
+            {(report.strategicPivots || []).map((p, i) => (
+              <p key={i} style={{ fontSize: 13, color: "rgba(255,255,255,0.56)", margin: "0 0 10px", lineHeight: 1.6 }}>
+                {p}
+              </p>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 18 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 12px" }}>
+              // bottom line
+            </p>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.68)", margin: 0, lineHeight: 1.7 }}>
+              {report.bottomLine}
+            </p>
           </div>
         </div>
       )}
@@ -361,57 +385,70 @@ function Report({ report, onReset, tab, setTab }) {
         <div style={{ display: "grid", gap: 12 }}>
           {(report.competitors || []).map((c, i) => (
             <div key={i} style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 20 }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
-                <div>
-                  <h3 style={{ fontFamily: SERIF, fontSize: 20, margin: "0 0 3px", fontWeight: 400 }}>{c.name}</h3>
-                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", margin: 0, fontFamily: MONO }}>{c.pricing}</p>
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-                  <p style={{ fontFamily: MONO, fontSize: 13, color: "#f87171", margin: "0 0 4px", fontWeight: 500 }}>{c.funding}</p>
-                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-                    {(c.backedBy || []).map((b, j) => (
-                      <span key={j} style={{ fontSize: 10, fontFamily: MONO, color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)", padding: "2px 7px", borderRadius: 4 }}>
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <div style={{ marginBottom: 12 }}>
+                <h3 style={{ fontFamily: SERIF, fontSize: 22, margin: "0 0 6px", fontWeight: 400 }}>{c.name}</h3>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.48)", margin: 0, lineHeight: 1.7 }}>{c.summary}</p>
               </div>
 
               <div style={{ background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.1)", borderRadius: 8, padding: 12 }}>
                 <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(74,222,128,0.5)", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 6px" }}>
                   your gap
                 </p>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", margin: 0, lineHeight: 1.6 }}>
-                  {c.gap}
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", margin: 0, lineHeight: 1.6 }}>{c.gap}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === "validation" && (
+        <div style={{ display: "grid", gap: 14 }}>
+          <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 20 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 18px" }}>
+              // validation steps
+            </p>
+            {(report.validationSteps || []).map((step, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: 12, marginBottom: i < report.validationSteps.length - 1 ? 14 : 0 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
+                  {i + 1}
+                </div>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
+                  {step}
                 </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <PlanCard title="Top Hypothesis" value={report.validationPlan?.topHypothesis} />
+            <PlanCard title="Fastest Experiment" value={report.validationPlan?.fastestExperiment} />
+            <PlanCard title="First Buyer" value={report.validationPlan?.firstBuyer} />
+            <PlanCard title="Manual Version" value={report.validationPlan?.manualVersion} />
+          </div>
+
+          <div style={{ background: "rgba(248,113,113,0.03)", border: "1px solid rgba(248,113,113,0.1)", borderRadius: 12, padding: 18 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(248,113,113,0.55)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 10px" }}>
+              // kill criteria
+            </p>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
+              {report.validationPlan?.killCriteria}
+            </p>
+          </div>
         </div>
       )}
+    </div>
+  );
+}
 
-      {tab === "pivots" && (
-        <div style={{ display: "grid", gap: 10 }}>
-          {(report.pivots || []).map((p, i) => (
-            <div key={i} style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 18, display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 14, alignItems: "start" }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.4)", fontFamily: MONO }}>{i + 1}</span>
-              </div>
-
-              <div>
-                <h4 style={{ fontSize: 14, fontWeight: 500, margin: "0 0 5px", color: "rgba(255,255,255,0.88)" }}>{p.title}</h4>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: 0, lineHeight: 1.6, fontFamily: MONO }}>{p.why}</p>
-              </div>
-
-              <div style={{ width: 48, height: 48, borderRadius: "50%", border: `2px solid ${scoreColor(p.score)}`, display: "flex", alignItems: "center", justifyContent: "center", background: `${scoreColor(p.score)}10`, flexShrink: 0 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: scoreColor(p.score), fontFamily: SERIF }}>{p.score}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+function PlanCard({ title, value }) {
+  return (
+    <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 18 }}>
+      <p style={{ fontFamily: "'Geist Mono', 'Courier New', monospace", fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 10px" }}>
+        // {title}
+      </p>
+      <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
+        {value}
+      </p>
     </div>
   );
 }
