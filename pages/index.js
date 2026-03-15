@@ -149,7 +149,7 @@ export default function App() {
           </div>
 
           <p style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.16)" }}>
-            // powered by deepseek-chat
+            // powered by openai
           </p>
         </div>
       )}
