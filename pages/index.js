@@ -418,6 +418,22 @@ function Report({ report, onReset, tab, setTab }) {
               </div>
             ))}
           </div>
+                  {tab === "signals" && (
+        <div style={{ display: "grid", gap: 14 }}>
+          <SignalCard
+            title="Reddit Signals"
+            items={report.marketSignals?.reddit || []}
+          />
+          <SignalCard
+            title="Google Signals"
+            items={report.marketSignals?.google || []}
+          />
+          <SignalCard
+            title="Funding Hints"
+            items={report.marketSignals?.fundingHints || []}
+          />
+        </div>
+      )}
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <PlanCard title="Top Hypothesis" value={report.validationPlan?.topHypothesis} />
