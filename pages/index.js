@@ -401,16 +401,46 @@ function Report({ report, onReset, tab, setTab }) {
         </div>
       )}
 
-      {tab === "validation" && (
+{tab === "validation" && (
   <div style={{ display: "grid", gap: 14 }}>
     <div style={{ background: CARD, border: BORDER, borderRadius: 12, padding: 20 }}>
-      <p style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 18px" }}>
+      <p
+        style={{
+          fontFamily: MONO,
+          fontSize: 10,
+          color: "rgba(255,255,255,0.28)",
+          letterSpacing: "1.5px",
+          textTransform: "uppercase",
+          margin: "0 0 18px"
+        }}
+      >
         // validation steps
       </p>
 
       {(report.validationSteps || []).map((step, i) => (
-        <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: 12, marginBottom: i < report.validationSteps.length - 1 ? 14 : 0 }}>
-          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div
+          key={i}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "28px 1fr",
+            gap: 12,
+            marginBottom: i < (report.validationSteps || []).length - 1 ? 14 : 0
+          }}
+        >
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: MONO,
+              fontSize: 12,
+              color: "rgba(255,255,255,0.5)"
+            }}
+          >
             {i + 1}
           </div>
           <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
@@ -418,6 +448,38 @@ function Report({ report, onReset, tab, setTab }) {
           </p>
         </div>
       ))}
+    </div>
+
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <PlanCard title="Top Hypothesis" value={report.validationPlan?.topHypothesis} />
+      <PlanCard title="Fastest Experiment" value={report.validationPlan?.fastestExperiment} />
+      <PlanCard title="First Buyer" value={report.validationPlan?.firstBuyer} />
+      <PlanCard title="Manual Version" value={report.validationPlan?.manualVersion} />
+    </div>
+
+    <div
+      style={{
+        background: "rgba(248,113,113,0.03)",
+        border: "1px solid rgba(248,113,113,0.1)",
+        borderRadius: 12,
+        padding: 18
+      }}
+    >
+      <p
+        style={{
+          fontFamily: MONO,
+          fontSize: 10,
+          color: "rgba(248,113,113,0.55)",
+          letterSpacing: "1.5px",
+          textTransform: "uppercase",
+          margin: "0 0 10px"
+        }}
+      >
+        // kill criteria
+      </p>
+      <p style={{ fontSize: 13, color: "rgba(255,255,255,0.58)", margin: 0, lineHeight: 1.7 }}>
+        {report.validationPlan?.killCriteria}
+      </p>
     </div>
   </div>
 )}
