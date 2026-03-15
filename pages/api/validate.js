@@ -1,3 +1,8 @@
+import { buildQueries } from "../../lib/buildQueries";
+import { collectRedditSignals } from "../../lib/collectRedditSignals";
+import { collectGoogleSignals } from "../../lib/collectGoogleSignals";
+import { buildSignalPack } from "../../lib/buildSignalPack";
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -21,6 +26,15 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
   }
 
+  const queries = buildQueries(idea);
+
+  const [redditResults, googleResults] = await Promise.all([
+    collectRedditSignals(queries.redditQuery),
+    collectGoogleSignals(queries.googleQuery),
+  ]);
+
+  const signalPack = buildSignalPack({ redditResults, googleResults });
+
   const SYSTEM = `
 You are an experienced startup investor and venture analyst.
 
@@ -29,8 +43,9 @@ Your task is to evaluate a startup idea using structured venture analysis across
 Maintain a constructively critical, founder-friendly tone.
 Avoid hype, clichés, or generic advice.
 Be concise, analytical, and practical.
-Do not pretend to have verified live sources unless such sources were actually provided.
 Clearly state uncertainty when information is limited.
+Use only the external signals provided.
+Do not invent external evidence beyond what is provided.
 
 Evaluate the idea across these categories:
 
@@ -134,6 +149,11 @@ Use this exact schema:
       "gap": ""
     }
   ],
+  "marketSignals": {
+    "reddit": [],
+    "google": [],
+    "fundingHints": []
+  },
   "bottomLine": ""
 }
 
@@ -144,6 +164,26 @@ Rules:
 • keep analysis concise but useful
 • avoid generic startup advice
 • if certainty is low, reflect that in the wording
+`;
+
+  const USER = `
+Evaluate the following startup idea using structured venture analysis.
+
+Startup idea:
+"${idea.trim()}"
+
+External market signals:
+
+Reddit signals:
+${signalPack.redditSignals.length ? signalPack.redditSignals.map((s, i) => `${i + 1}. ${s}`).join("\n") : "No Reddit signals found."}
+
+Google signals:
+${signalPack.googleSignals.length ? signalPack.googleSignals.map((s, i) => `${i + 1}. ${s}`).join("\n") : "No Google signals found."}
+
+Funding hints:
+${signalPack.fundingHints.length ? signalPack.fundingHints.map((s, i) => `${i + 1}. ${s}`).join("\n") : "No funding hints found."}
+
+Use these signals explicitly when assessing market demand, competition, and funding landscape.
 `;
 
   try {
@@ -160,13 +200,7 @@ Rules:
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM },
-          {
-            role: "user",
-            content: `Evaluate the following startup idea using structured venture analysis.
-
-Startup idea:
-"${idea.trim()}"`
-          }
+          { role: "user", content: USER }
         ]
       }),
     });
@@ -188,9 +222,15 @@ Startup idea:
     let parsed;
     try {
       parsed = JSON.parse(text);
-    } catch (err) {
+    } catch {
       return res.status(500).json({ error: "Model did not return valid JSON" });
     }
+
+    parsed.marketSignals = {
+      reddit: signalPack.redditSignals,
+      google: signalPack.googleSignals,
+      fundingHints: signalPack.fundingHints,
+    };
 
     return res.status(200).json(parsed);
   } catch (err) {
